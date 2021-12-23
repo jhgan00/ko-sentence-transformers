@@ -4,18 +4,26 @@ It generates sentence embeddings that can be compared using cosine-similarity to
 Usage:
 python training_sts.py
 """
-import sys
 import csv
 import logging
 import math
 import os
 from datetime import datetime
+import random
+import numpy as np
+import torch
 
+from ko_sentence_transformers.models import KoBertTransformer
 from sentence_transformers import SentenceTransformer, LoggingHandler, models, losses
-import kobert
 from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator
 from sentence_transformers.readers import InputExample
 from torch.utils.data import DataLoader
+
+seed = 777
+random.seed(seed)
+np.random.seed(seed)
+torch.manual_seed(seed)
+torch.cuda.manual_seed(seed)
 
 logging.basicConfig(format='%(asctime)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -26,12 +34,12 @@ sts_dataset_path = 'KorNLUDatasets/KorSTS'
 model_name = "monologg/kobert"
 
 # Read the dataset
-train_batch_size = 16
-num_epochs = 1
+train_batch_size = 8
+num_epochs = 4
 model_save_path = 'output/training_stsbenchmark_' + model_name.replace("/", "-") + '-' + datetime.now().strftime(
     "%Y-%m-%d_%H-%M-%S")
 
-word_embedding_model = kobert.KoBertTransformer(model_name)
+word_embedding_model = KoBertTransformer(model_name)
 pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension(),
                                pooling_mode_mean_tokens=True,
                                pooling_mode_cls_token=False,

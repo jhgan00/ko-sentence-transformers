@@ -11,11 +11,20 @@ import logging
 import math
 import os
 import random
+import numpy as np
+import torch
 from datetime import datetime
 
+from ko_sentence_transformers.models import KoBertTransformer
 from sentence_transformers import LoggingHandler, SentenceTransformer, InputExample
 from sentence_transformers import models, losses, datasets
 from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator
+
+seed = 777
+random.seed(seed)
+np.random.seed(seed)
+torch.manual_seed(seed)
+torch.cuda.manual_seed(seed)
 
 logging.basicConfig(
     format='%(asctime)s - %(message)s',
@@ -25,14 +34,14 @@ logging.basicConfig(
 )
 
 model_name = "monologg/kobert"
-train_batch_size = 128
+train_batch_size = 64
 max_seq_length = 75
 num_epochs = 1
 model_save_path = 'output/training_nli_v2_' + model_name.replace("/", "-") + '-' + datetime.now().strftime(
     "%Y-%m-%d_%H-%M-%S")
 
 # Here we define our SentenceTransformer model
-word_embedding_model = models.Transformer(model_name, max_seq_length=max_seq_length)
+word_embedding_model = KoBertTransformer(model_name, max_seq_length=max_seq_length)
 pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension(), pooling_mode='mean')
 model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
@@ -74,7 +83,7 @@ train_dataloader = datasets.NoDuplicatesDataLoader(train_samples, batch_size=tra
 train_loss = losses.MultipleNegativesRankingLoss(model)
 
 # Read STSbenchmark dataset and use it as development set
-logging.info("Read KorSTSbenchmark dev dataset")
+logging.info("Read KorSTS benchmark dev dataset")
 dev_samples = []
 dev_file = os.path.join(sts_dataset_path, "sts-dev.tsv")
 with open(dev_file, 'rt', encoding='utf8') as fIn:
