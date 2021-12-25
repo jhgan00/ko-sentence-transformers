@@ -118,6 +118,7 @@ Top 5 most similar sentences in corpus:
 학습 및 성능 평가 과정은 `training_*.py`, `benchmark.py` 에서 확인할 수 있습니다.
 학습된 모델은 허깅페이스 모델 허브에 공개되어있습니다.
 
+- [ko-sbert-multi](https://huggingface.co/jhgan/ko-sbert-multitask)
 - [ko-sbert-sts](https://huggingface.co/jhgan/ko-sbert-sts)
 - [ko-sbert-nli](https://huggingface.co/jhgan/ko-sbert-nli) 
 
