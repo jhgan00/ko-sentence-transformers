@@ -113,8 +113,9 @@ Top 5 most similar sentences in corpus:
 ## KorSTS Benchmarks
 
 카카오브레인의 KorNLU 데이터셋을 활용하여 `sentence-BERT` 모델을 학습시킨 후 다국어 모델의 성능과 비교한 결과입니다.
-`ko-sbert-nli` 모델은 KorNLI 데이터셋을 활용하여 학습되었고, `ko-sbert-sts` 모델은 KorSTS 데이터셋을 활용하여 학습되었습니다. 
-학습 및 성능 과정은 `training_nli_v2.py`, `training_sts.py`, `benchmark.py` 에서 확인할 수 있습니다.
+`ko-sbert-nli` 모델은 KorNLI 데이터셋을 활용하여 학습되었고, `ko-sbert-sts` 모델은 KorSTS 데이터셋을 활용하여 학습되었습니다.
+`ko-sbert-multitask` 모델은 두 데이터셋을 모두 활용하여 멀티태스크로 학습되었습니다.
+학습 및 성능 평가 과정은 `training_*.py`, `benchmark.py` 에서 확인할 수 있습니다.
 학습된 모델은 허깅페이스 모델 허브에 공개되어있습니다.
 
 - [ko-sbert-sts](https://huggingface.co/jhgan/ko-sbert-sts)
@@ -122,9 +123,10 @@ Top 5 most similar sentences in corpus:
 
 모델|Cosine Pearson|Cosine Spearman|Manhattan Pearson|Manhattan Spearman|Euclidean Pearson|Euclidean Spearman|Dot Pearson|Dot Spearman|
 |:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-ko-sbert-nli|**82.03**|**82.36**|80.08|79.91|80.06|79.85|**75.76**|**74.72**
-ko-sbert-sts|80.79|79.91|78.08|77.35|78.03|77.31|**75.96**|**75.20**
-paraphrase-multilingual-mpnet-base-v2|80.69|82.00|**80.33**|**80.39**|**80.48**|**80.61**|70.30|68.48
+ko-sbert-multitask|**83.78**|**84.02**|**81.61**|**81.72**|**81.68**|**81.81**|**79.16**|**78.69**
+ko-sbert-nli|82.03|82.36|80.08|79.91|80.06|79.85|75.76|74.72
+ko-sbert-sts|80.79|79.91|78.08|77.35|78.03|77.31|75.96|75.20
+paraphrase-multilingual-mpnet-base-v2|80.69|82.00|80.33|80.39|80.48|80.61|70.30|68.48
 distiluse-base-multilingual-cased-v1|75.50|74.83|73.05|73.15|73.67|73.86|74.79|73.95
 distiluse-base-multilingual-cased-v2|75.62|74.83|73.03|72.87|73.68|73.62|63.80|62.35
 paraphrase-multilingual-MiniLM-L12-v2|73.87|74.44|72.55|71.95|72.45|71.85|55.86|55.26
