@@ -23,6 +23,9 @@ with open(test_file, 'rt', encoding='utf8') as fIn:
         test_samples.append(InputExample(texts=[row['sentence1'], row['sentence2']], label=score))
 test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(test_samples, name='sts-test')
 
+model = SentenceTransformer("jhgan/ko-sbert-multitask")
+test_evaluator(model)
+
 model = SentenceTransformer("jhgan/ko-sbert-nli")
 test_evaluator(model)
 
