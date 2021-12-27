@@ -3,10 +3,32 @@
 이 프로젝트는 한국어 사전학습 모델을 한국어 문장 임베딩에 활용하기 위해 만들어졌습니다.
 KorNLU 데이터셋으로 한국어 사전학습 모델을 파인튜닝하고, 파인튜닝된 모델을 `sentence-transformers`에서 손쉽게 다운로드받아 활용할 수 있도록 합니다.
 
+## KorSTS Benchmarks
+
+카카오브레인의 KorNLU 데이터셋을 활용하여 모델을 학습시킨 후 다국어 모델의 성능과 비교한 결과입니다.
+`ko-*-nli`, `ko-*-sts` 모델은 각각 KorNLI, KorSTS 데이터셋을 활용하여 학습되었습니다.
+`ko-*-multitask` 모델은 두 데이터셋을 모두 활용하여 멀티태스크로 학습되었습니다.
+학습 및 성능 평가 과정은 `training_*.py`, `benchmark.py` 에서 확인할 수 있습니다.
+학습된 모델은 허깅페이스 모델 허브에 공개되어있습니다. 
+
+|model|cosine_pearson|cosine_spearman|euclidean_pearson|euclidean_spearman|manhattan_pearson|manhattan_spearman|dot_pearson|dot_spearman|
+|:-------------------------|-----------------:|------------------:|--------------------:|---------------------:|--------------------:|---------------------:|--------------:|---------------:|
+|[ko-sroberta-multitask](https://huggingface.co/jhgan/ko-sroberta-multitask)|**84.77**|**85.6**|**83.71**|**84.40**|**83.70**|**84.38**|82.42|82.33|
+|[ko-sbert-multitask](https://huggingface.co/jhgan/ko-sbert-multitask)|84.13|84.71|82.42|82.66|82.41|82.69|80.05|79.69|
+|[ko-sroberta-base-nli](https://huggingface.co/jhgan/ko-sroberta-nli)|82.83|83.85|82.87|83.29|82.88|83.28|80.34|79.69|
+|[ko-sbert-nli](https://huggingface.co/jhgan/ko-sbert-multitask)|82.24|83.16|82.19|82.31|82.18|82.3|79.3|78.78|
+|[ko-sroberta-sts](https://huggingface.co/jhgan/ko-sroberta-sts)|81.84|81.82|81.15|81.25|81.14|81.25|79.09|78.54|
+|[ko-sbert-sts](https://huggingface.co/jhgan/ko-sbert-sts)|81.55|81.23|79.94|79.79|79.9|79.75|76.02|75.31|
+paraphrase-multilingual-mpnet-base-v2|80.69|82.00|80.33|80.39|80.48|80.61|70.30|68.48
+distiluse-base-multilingual-cased-v1|75.50|74.83|73.05|73.15|73.67|73.86|74.79|73.95
+distiluse-base-multilingual-cased-v2|75.62|74.83|73.03|72.87|73.68|73.62|63.80|62.35
+paraphrase-multilingual-MiniLM-L12-v2|73.87|74.44|72.55|71.95|72.45|71.85|55.86|55.26
 
 ## Examples
 
-허깅페이스 허브에 업로드된 모델을 가져와 `sentence-transformers`  API 에서 활용할 수 있습니다.
+허깅페이스 허브에 업로드된 sentence-BERT 모델을 가져와 `sentence-transformers` 에서 활용할 수 있습니다.
+아래는 임베딩 벡터를 통해 가장 유사한 문장을 찾는 예시입니다. 
+더 많은 예시는 [sentence-transformers 문서](https://www.sbert.net/index.html)를 참고해주세요. 
 
 ```python
 from sentence_transformers import SentenceTransformer, util
@@ -90,27 +112,18 @@ Top 5 most similar sentences in corpus:
 원숭이 한 마리가 드럼을 연주한다. (Score: 0.0913)
 ```
 
-## KorSTS Benchmarks
+## Training
 
-카카오브레인의 KorNLU 데이터셋을 활용하여 모델을 학습시킨 후 다국어 모델의 성능과 비교한 결과입니다.
-`ko-*-nli`, `ko-*-sts` 모델은 각각 KorNLI, KorSTS 데이터셋을 활용하여 학습되었습니다.
-`ko-*-multitask` 모델은 두 데이터셋을 모두 활용하여 멀티태스크로 학습되었습니다.
-학습 및 성능 평가 과정은 `training_*.py`, `benchmark.py` 에서 확인할 수 있습니다.
-학습된 모델은 허깅페이스 모델 허브에 공개되어있습니다. 
+직접 모델을 파인튜닝하려면 [`KorNLUDatasets`](https://github.com/kakaobrain/KorNLUDatasets) 저장소를 클론한 후 `training_*.py` 스크립트를 실행시키면 됩니다.
+`train.sh` 파일에서 학습 예시를 확인할 수 있습니다.
 
-|model|cosine_pearson|cosine_spearman|euclidean_pearson|euclidean_spearman|manhattan_pearson|manhattan_spearman|dot_pearson|dot_spearman|
-|:-------------------------|-----------------:|------------------:|--------------------:|---------------------:|--------------------:|---------------------:|--------------:|---------------:|
-|[ko-sroberta-multitask](https://huggingface.co/jhgan/ko-sroberta-multitask)|**84.77**|**85.6**|**83.71**|**84.40**|**83.70**|**84.38**|82.42|82.33|
-|[ko-sbert-multitask](https://huggingface.co/jhgan/ko-sbert-multitask)|84.13|84.71|82.42|82.66|82.41|82.69|80.05|79.69|
-|[ko-sroberta-base-nli](https://huggingface.co/jhgan/ko-sroberta-nli)|82.83|83.85|82.87|83.29|82.88|83.28|80.34|79.69|
-|[ko-sbert-nli](https://huggingface.co/jhgan/ko-sbert-multitask)|82.24|83.16|82.19|82.31|82.18|82.3|79.3|78.78|
-|[ko-sroberta-sts](https://huggingface.co/jhgan/ko-sroberta-sts)|81.84|81.82|81.15|81.25|81.14|81.25|79.09|78.54|
-|[ko-sbert-sts](https://huggingface.co/jhgan/ko-sbert-sts)|81.55|81.23|79.94|79.79|79.9|79.75|76.02|75.31|
-paraphrase-multilingual-mpnet-base-v2|80.69|82.00|80.33|80.39|80.48|80.61|70.30|68.48
-distiluse-base-multilingual-cased-v1|75.50|74.83|73.05|73.15|73.67|73.86|74.79|73.95
-distiluse-base-multilingual-cased-v2|75.62|74.83|73.03|72.87|73.68|73.62|63.80|62.35
-paraphrase-multilingual-MiniLM-L12-v2|73.87|74.44|72.55|71.95|72.45|71.85|55.86|55.26
-
+```bash
+git clone https://github.com/jhgan00/ko-sentence-transformers.git
+cd ko-sentence-transformers
+pip install -r requirements.txt
+git clone https://github.com/kakaobrain/KorNLUDatasets.git
+python training_multi-task.py --model_name_or_path klue/roberta-base
+```
 
 ## Updates
 
