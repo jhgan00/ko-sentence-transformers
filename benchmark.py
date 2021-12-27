@@ -23,6 +23,15 @@ with open(test_file, 'rt', encoding='utf8') as fIn:
         test_samples.append(InputExample(texts=[row['sentence1'], row['sentence2']], label=score))
 test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(test_samples, name='sts-test')
 
+model = SentenceTransformer("jhgan/ko-sroberta-multitask")
+test_evaluator(model)
+
+model = SentenceTransformer("jhgan/ko-sroberta-nli")
+test_evaluator(model)
+
+model = SentenceTransformer("jhgan/ko-sroberta-sts")
+test_evaluator(model)
+
 model = SentenceTransformer("jhgan/ko-sbert-multitask")
 test_evaluator(model)
 
@@ -31,15 +40,15 @@ test_evaluator(model)
 
 model = SentenceTransformer("jhgan/ko-sbert-sts")
 test_evaluator(model)
-
-model = SentenceTransformer("distiluse-base-multilingual-cased-v1")
-test_evaluator(model)
-
-model = SentenceTransformer("distiluse-base-multilingual-cased-v2")
-test_evaluator(model)
-
-model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
-test_evaluator(model)
-
-model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
-test_evaluator(model)
+#
+# model = SentenceTransformer("distiluse-base-multilingual-cased-v1")
+# test_evaluator(model)
+#
+# model = SentenceTransformer("distiluse-base-multilingual-cased-v2")
+# test_evaluator(model)
+#
+# model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+# test_evaluator(model)
+#
+# model = SentenceTransformer("paraphrase-multilingual-mpnet-base-v2")
+# test_evaluator(model)
