@@ -34,7 +34,7 @@ paraphrase-multilingual-MiniLM-L12-v2|73.87|74.44|72.55|71.95|72.45|71.85|55.86|
 from sentence_transformers import SentenceTransformer, util
 import numpy as np
 
-embedder = SentenceTransformer("jhgan/ko-sbert-sts")
+embedder = SentenceTransformer("jhgan/ko-sroberta-multitask")
 
 # Corpus with example sentences
 corpus = ['한 남자가 음식을 먹는다.',
