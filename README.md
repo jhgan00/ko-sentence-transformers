@@ -5,11 +5,11 @@ KorNLU 데이터셋으로 한국어 사전학습 모델을 파인튜닝하고, �
 
 ## KorSTS Benchmarks
 
-카카오브레인의 KorNLU 데이터셋을 활용하여 모델을 학습시킨 후 다국어 모델의 성능과 비교한 결과입니다.
-`ko-*-nli`, `ko-*-sts` 모델은 각각 KorNLI, KorSTS 데이터셋을 활용하여 학습되었습니다.
-`ko-*-multitask` 모델은 두 데이터셋을 모두 활용하여 멀티태스크로 학습되었습니다.
-학습 및 성능 평가 과정은 `training_*.py`, `benchmark.py` 에서 확인할 수 있습니다.
-학습된 모델은 허깅페이스 모델 허브에 공개되어있습니다. 
+- 카카오브레인의 KorNLU 데이터셋을 활용하여 모델을 학습시킨 후 다국어 모델의 성능과 비교한 결과입니다.
+- 사전학습 모델은 [`klue`](https://huggingface.co/klue )의 `bert-base`, `roberta-base`를 활용하였습니다
+- `ko-*-nli`, `ko-*-sts` 모델은 각각 KorNLI, KorSTS 데이터셋을 활용하여 학습되었으며, `ko-*-multitask` 모델은 두 데이터셋을 모두 활용하여 멀티태스크로 학습되었습니다.
+- 학습 및 성능 평가 과정은 `training_*.py`, `benchmark.py` 에서 확인할 수 있습니다.
+- 학습된 모델은 허깅페이스 모델 허브에 공개되어있습니다. 
 
 |model|cosine_pearson|cosine_spearman|euclidean_pearson|euclidean_spearman|manhattan_pearson|manhattan_spearman|dot_pearson|dot_spearman|
 |:-------------------------|-----------------:|------------------:|--------------------:|---------------------:|--------------------:|---------------------:|--------------:|---------------:|
@@ -25,6 +25,9 @@ distiluse-base-multilingual-cased-v2|75.62|74.83|73.03|72.87|73.68|73.62|63.80|6
 paraphrase-multilingual-MiniLM-L12-v2|73.87|74.44|72.55|71.95|72.45|71.85|55.86|55.26
 
 ## Examples
+
+
+ - 예시 출처: https://github.com/BM-K/KoSentenceBERT-SKT
 
 허깅페이스 허브에 업로드된 sentence-BERT 모델을 가져와 `sentence-transformers` 에서 활용할 수 있습니다.
 아래는 임베딩 벡터를 통해 가장 유사한 문장을 찾는 예시입니다. 
