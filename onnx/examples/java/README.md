@@ -10,7 +10,8 @@ cd ko-sentence-transformers
 pip install -r requirements.txt
 cd onnx
 python export_onnx.py
-cp ./models/ko-sroberta-multitask.onnx examples/java/src/main/resources
+mkdir -p examples/java/src/main/resources/ 
+cp ./models/ko-sroberta-multitask.onnx examples/java/src/main/resources/
 cd examples/java
 bash run.sh
 ```
