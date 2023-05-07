@@ -128,12 +128,29 @@ git clone https://github.com/kakaobrain/KorNLUDatasets.git
 python training_multi-task.py --model_name_or_path klue/roberta-base
 ```
 
+## ONNX 변환
+
+`requirements.txt` 설치 후 `onnx` 디렉토리에서 `export_onnx.py` 스크립트를 실행합니다.
+변환된 `onnx` 모델은 `onnx/models/ko-sroberta-multitask.onnx` 경로에 저장됩니다.
+
+```
+git clone https://github.com/jhgan00/ko-sentence-transformers.git
+cd ko-sentence-transformers
+pip install -r requirements.txt
+cd onnx
+python export_onnx.py
+```
+
 ## Updates
 
 ### Dec 27, 2021
 
 - 사전학습 bert 모델을 KLUE 모델로 변경
 - KLUE roberta-base 모델 추가
+
+### May 7, 2023
+
+- `onnx` 변환 스크립트 & 자바 예시 추가
 
 ## References
 
