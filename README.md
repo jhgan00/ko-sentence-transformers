@@ -150,6 +150,21 @@ python training_multi-task.py \
 
 학습된 모델은 dim별로 KorSTS test 셋에서 평가됩니다 (`benchmark.py --matryoshka_model <path> --matryoshka_dims 768,512,256,128,64,32`).
 
+### KorSTS test cosine-spearman (×100)
+
+`klue/roberta-base` 기반, 위 [KorSTS Benchmarks](#korsts-benchmarks)와 동일한 학습 설정에서 MRL을 적용한 결과입니다. 풀 차원(768)에서는 non-MRL 베이스라인과 거의 동등하고, 차원이 줄어들어도 성능 손실이 완만합니다.
+
+| dim | STS | NLI | Multi-task |
+| --- | --- | --- | --- |
+| 768 | 81.84 | 84.07 | **85.07** |
+| 512 | 81.68 | 83.99 | 85.00 |
+| 256 | 81.44 | 83.63 | 84.61 |
+| 128 | 80.72 | 83.12 | 83.98 |
+|  64 | 79.37 | 82.87 | 83.32 |
+|  32 | 77.50 | 81.10 | 81.36 |
+
+비교 (non-MRL, dim=768): STS 81.82 / NLI 83.85 / Multi-task 85.60.
+
 추론 시에는 임베딩을 단순히 슬라이싱해서 사용합니다.
 
 ```python
