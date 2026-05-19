@@ -18,3 +18,10 @@ python training_multi-task.py --model_name_or_path klue/roberta-base
 #python training_nli.py --model_name_or_path klue/roberta-base
 #python training_nli.py --model_name_or_path klue/roberta-small
 #python training_nli.py --model_name_or_path klue/roberta-large
+
+# train with Matryoshka Representation Learning (MRL)
+# Wrap the loss so the first m dims of the embedding are themselves usable
+# at m in {768, 512, 256, 128, 64, 32}.
+#python training_multi-task.py --model_name_or_path klue/roberta-base --matryoshka_dims 768,512,256,128,64,32
+#python training_nli.py --model_name_or_path klue/roberta-base --matryoshka_dims 768,512,256,128,64,32
+#python training_sts.py --model_name_or_path klue/roberta-base --matryoshka_dims 768,512,256,128,64,32

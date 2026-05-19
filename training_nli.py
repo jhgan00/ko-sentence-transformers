@@ -16,7 +16,7 @@ from datetime import datetime
 import numpy as np
 import torch
 from sentence_transformers import SentenceTransformer, LoggingHandler, models, losses, datasets
-from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator
+from sentence_transformers.evaluation import EmbeddingSimilarityEvaluator, SequentialEvaluator
 
 from data_util import load_kor_sts_samples, load_kor_nli_samples
 
@@ -29,7 +29,22 @@ parser.add_argument("--num_epochs", type=int, default=1)
 parser.add_argument("--output_dir", type=str, default="output")
 parser.add_argument("--output_prefix", type=str, default="kor_nli_")
 parser.add_argument("--seed", type=int, default=777)
+parser.add_argument("--matryoshka_dims", type=str, default=None,
+                    help="Comma-separated nested dims for Matryoshka Representation Learning "
+                         "(e.g. '768,512,256,128,64,32'). If omitted, MRL is disabled.")
+parser.add_argument("--matryoshka_weights", type=str, default=None,
+                    help="Comma-separated per-dim loss weights matching --matryoshka_dims. "
+                         "Defaults to uniform 1.0 when omitted.")
 args = parser.parse_args()
+
+matryoshka_dims = None
+matryoshka_weights = None
+if args.matryoshka_dims:
+    matryoshka_dims = [int(d) for d in args.matryoshka_dims.split(",")]
+    if args.matryoshka_weights:
+        matryoshka_weights = [float(w) for w in args.matryoshka_weights.split(",")]
+        if len(matryoshka_weights) != len(matryoshka_dims):
+            raise ValueError("--matryoshka_weights length must match --matryoshka_dims length")
 
 # Fix random seed
 random.seed(args.seed)
@@ -67,8 +82,24 @@ for train_file in train_files:
     train_samples += load_kor_nli_samples(train_file)
 train_dataloader = datasets.NoDuplicatesDataLoader(train_samples, batch_size=args.batch_size)
 dev_samples = load_kor_sts_samples(dev_file)
-dev_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(dev_samples, batch_size=args.batch_size, name='sts-dev')
 train_loss = losses.MultipleNegativesRankingLoss(model)
+
+if matryoshka_dims:
+    train_loss = losses.MatryoshkaLoss(
+        model, train_loss,
+        matryoshka_dims=matryoshka_dims,
+        matryoshka_weights=matryoshka_weights,
+    )
+    dev_evaluator = SequentialEvaluator([
+        EmbeddingSimilarityEvaluator.from_input_examples(
+            dev_samples, batch_size=args.batch_size,
+            truncate_dim=d, name=f'sts-dev-{d}',
+        ) for d in matryoshka_dims
+    ], main_score_function=lambda scores: scores[0])
+else:
+    dev_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(
+        dev_samples, batch_size=args.batch_size, name='sts-dev'
+    )
 
 # Configure the training.
 warmup_steps = math.ceil(len(train_dataloader) * args.num_epochs * 0.1)  # 10% of train data for warm-up
@@ -87,5 +118,12 @@ model = SentenceTransformer(model_save_path)
 logging.info("Read KorSTS benchmark test dataset")
 test_file = os.path.join(sts_dataset_path, "sts-test.tsv")
 test_samples = load_kor_sts_samples(test_file)
-test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(test_samples, name='sts-test')
+if matryoshka_dims:
+    test_evaluator = SequentialEvaluator([
+        EmbeddingSimilarityEvaluator.from_input_examples(
+            test_samples, truncate_dim=d, name=f'sts-test-{d}',
+        ) for d in matryoshka_dims
+    ], main_score_function=lambda scores: scores[0])
+else:
+    test_evaluator = EmbeddingSimilarityEvaluator.from_input_examples(test_samples, name='sts-test')
 test_evaluator(model, output_path=model_save_path)

@@ -128,6 +128,43 @@ git clone https://github.com/kakaobrain/KorNLUDatasets.git
 python training_multi-task.py --model_name_or_path klue/roberta-base
 ```
 
+## Matryoshka Representation Learning (MRL)
+
+[Matryoshka Representation Learning](https://arxiv.org/abs/2205.13147)을 적용하면 임베딩 벡터의 첫 `m` 차원만 잘라 써도 그 자체로 유효한 표현이 되도록 학습할 수 있습니다.
+서로 다른 차원에서 손실을 동시에 최적화하기 때문에 한 번 학습한 모델을 여러 차원에서 활용할 수 있습니다 (예: 검색 단계에서는 64차원으로 후보 추출 → 768차원으로 재정렬).
+
+기존 학습 스크립트에 `--matryoshka_dims` 인자만 추가하면 됩니다. 인자를 생략하면 기존 동작과 동일하게 학습됩니다.
+
+```bash
+# KLUE roberta-base (768-dim) 기준 예시
+python training_multi-task.py \
+    --model_name_or_path klue/roberta-base \
+    --matryoshka_dims 768,512,256,128,64,32
+
+# 가중치를 차원별로 다르게 주고 싶다면
+python training_multi-task.py \
+    --model_name_or_path klue/roberta-base \
+    --matryoshka_dims 768,512,256,128,64,32 \
+    --matryoshka_weights 1.0,1.0,1.0,1.0,1.0,1.0
+```
+
+학습된 모델은 dim별로 KorSTS test 셋에서 평가됩니다 (`benchmark.py --matryoshka_model <path> --matryoshka_dims 768,512,256,128,64,32`).
+
+추론 시에는 임베딩을 단순히 슬라이싱해서 사용합니다.
+
+```python
+from sentence_transformers import SentenceTransformer
+import torch.nn.functional as F
+
+model = SentenceTransformer("path/to/matryoshka-model")
+emb = model.encode(["문장 예시"], convert_to_tensor=True)
+
+# 64차원으로 잘라 쓰기 (cosine 유사도를 쓸 경우 재정규화 권장)
+emb_64 = F.normalize(emb[:, :64], p=2, dim=1)
+```
+
+또는 `SentenceTransformer(..., truncate_dim=64)`로 모델 로드 시점에 차원을 고정할 수도 있습니다 (sentence-transformers >= 2.4.0).
+
 ## ONNX 변환
 
 `requirements.txt` 설치 후 `onnx` 디렉토리에서 `export_onnx.py` 스크립트를 실행합니다.
@@ -158,5 +195,6 @@ python export_onnx.py
 preprint arXiv:2004.03289
 - Reimers, Nils and Iryna Gurevych. “Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks.” ArXiv abs/1908.10084 (2019)
 - Reimers, Nils and Iryna Gurevych. “Making Monolingual Sentence Embeddings Multilingual Using Knowledge Distillation.” EMNLP (2020)
+- Kusupati, A., Bhatt, G., Rege, A., Wallingford, M., Sinha, A., Ramanujan, V., Howard-Snyder, W., Chen, K., Kakade, S., Jain, P., & Farhadi, A. (2022). Matryoshka Representation Learning. NeurIPS 2022. arXiv:2205.13147
 - [Ko-Sentence-BERT-SKTBERT](https://github.com/BM-K/KoSentenceBERT-SKT)
 - [KoBERT](https://github.com/SKTBrain/KoBERT)
