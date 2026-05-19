@@ -189,6 +189,11 @@ python export_onnx.py
 
 - `onnx` 변환 스크립트 & 자바 예시 추가
 
+### May 19, 2026
+
+- Matryoshka Representation Learning (MRL) 지원 추가 (`--matryoshka_dims`)
+- 학습된 모델은 첫 *m* 차원만 잘라서 그대로 사용 가능 (예: 768 → 32)
+
 ## References
 
 - Ham, J., Choe, Y. J., Park, K., Choi, I., & Soh, H. (2020). Kornli and korsts: New benchmark datasets for korean natural language understanding. arXiv
