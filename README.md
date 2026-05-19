@@ -163,7 +163,7 @@ emb = model.encode(["문장 예시"], convert_to_tensor=True)
 emb_64 = F.normalize(emb[:, :64], p=2, dim=1)
 ```
 
-또는 `SentenceTransformer(..., truncate_dim=64)`로 모델 로드 시점에 차원을 고정할 수도 있습니다 (sentence-transformers >= 2.4.0).
+또는 `SentenceTransformer(..., truncate_dim=64)`로 모델 로드 시점에 차원을 고정할 수도 있습니다 (sentence-transformers >= 2.7.0).
 
 ## ONNX 변환
 
